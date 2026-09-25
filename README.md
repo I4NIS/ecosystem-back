@@ -20,7 +20,7 @@ Swagger : http://localhost:3000/api (JSON : `/api-json`)
 | POST    | `/tasks`      | Créer une tâche `{ title, description? }` |
 | PATCH   | `/tasks/:id`  | Changer le statut `{ done }`    |
 
-Variables : `PORT` (défaut 3000), `CORS_ORIGIN` (défaut `http://localhost:5173`).
+Variables : `PORT` (défaut 3000), `CORS_ORIGIN` — une ou plusieurs origines séparées par des virgules (défaut `http://localhost:5173`).
 
 ## Tests
 

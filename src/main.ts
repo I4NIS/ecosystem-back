@@ -7,7 +7,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+    origin: (process.env.CORS_ORIGIN ?? 'http://localhost:5173')
+      .split(',')
+      .map((o) => o.trim().replace(/\/$/, '')),
   });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
@@ -16,8 +18,19 @@ async function bootstrap() {
     .setDescription('API de gestion de tâches')
     .setVersion('1.0')
     .build();
-  SwaggerModule.setup('api', app, () =>
-    SwaggerModule.createDocument(app, config),
+  // Assets served from a CDN: swagger-ui-dist static files are not bundled on Vercel
+  const swaggerCdn = 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.33.0';
+  SwaggerModule.setup(
+    'api',
+    app,
+    () => SwaggerModule.createDocument(app, config),
+    {
+      customCssUrl: `${swaggerCdn}/swagger-ui.css`,
+      customJs: [
+        `${swaggerCdn}/swagger-ui-bundle.js`,
+        `${swaggerCdn}/swagger-ui-standalone-preset.js`,
+      ],
+    },
   );
 
   await app.listen(process.env.PORT ?? 3000);
